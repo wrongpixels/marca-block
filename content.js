@@ -1,9 +1,9 @@
 const SELECTORS = {
-  TV_SOCIEDAD_BASURA: '[data-flex-name="portada/flex-list-ad-2"]',
-  PRENSA_SPAM: '[data-flex-name="portada/flex-list-ad-bt"]',
+  TV_SOCIEDAD: '[data-flex-name="portada/flex-list-ad-2"]',
+  PRENSA: '[data-flex-name="portada/flex-list-ad-bt"]',
   APUESTAS: '.ue-l-cover-grid.flex-territorio-apuestas',
   MARCA_TV: '.ue-l-cover-grid.flex-video-marca-tv',
-  ADS_PUBLICIDAD: '[aria-roledescription="Publicidad"]',
+  SPONSORED: '[aria-roledescription="Publicidad"]',
   EMBEDDED_VIDEOS: '.ue-c-cover-content__video-duration-icon',
   AUTOPLAY_IFRAMES: 'iframe[allow*="autoplay"]',
   VIDEO_AUTOPLAY: '.ue-c-video-player-frame',
@@ -13,11 +13,11 @@ const SELECTORS = {
 const DEFAULTS = {
   enabled: true,
   sectionToggles: {
-    TV_SOCIEDAD_BASURA: true,
-    PRENSA_SPAM: true,
+    TV_SOCIEDAD: true,
+    PRENSA: true,
     APUESTAS: true,
     MARCA_TV: true,
-    ADS_PUBLICIDAD: true,
+    SPONSORED: true,
     EMBEDDED_VIDEOS: true,
     AUTOPLAY_IFRAMES: true,
     VIDEO_AUTOPLAY: true,

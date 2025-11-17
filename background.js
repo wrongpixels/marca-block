@@ -1,15 +1,15 @@
 const DEFAULTS = {
   enabled: true,
   sectionToggles: {
-    TV_SOCIEDAD_BASURA: true, // flex-list-ad-2
-    PRENSA_SPAM: true, // flex-list-ad-bt
-    APUESTAS: true, // flex-territorio-apuestas
-    MARCA_TV: true, // flex-video-marca-tv
-    ADS_PUBLICIDAD: true, // aria-roledescription="Publicidad"
-    EMBEDDED_VIDEOS: true, // Vídeos Marca TV embebidos
-    AUTOPLAY_IFRAMES: true, // Vídeos con autoplay
-    VIDEO_AUTOPLAY: true, // .ue-c-video-player-frame
-    ARTICLE_SECONDARY_COLUMN: true, // Columna secundaria
+    TV_SOCIEDAD: true,
+    PRENSA: true,
+    APUESTAS: true,
+    MARCA_TV: true,
+    SPONSORED: true,
+    EMBEDDED_VIDEOS: true,
+    AUTOPLAY_IFRAMES: true,
+    VIDEO_AUTOPLAY: true,
+    ARTICLE_SECONDARY_COLUMN: true,
   },
   authors: [],
   keywords: [],
