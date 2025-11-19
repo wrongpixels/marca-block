@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Opciones - Marca Block</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f9f9f9;
+        color: #333;
+      }
+      a {
+        font-weight: bold;
+        color: #5d82c7;
+        text-decoration: inherit;
+      }
+      h1 {
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        margin-top: 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+      .header {
+        display: flex;
+        gap: 15px;
+      }
+      .list-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      input[type='text'] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button.add-btn {
+        background: #333;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .item-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 30px;
+      }
+      .tag {
+        background: #eee;
+        padding: 5px 12px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+      .tag span {
+        cursor: pointer;
+        color: #e10f1a;
+        font-weight: bold;
+        padding: 0 2px;
+      }
+      .tag span:hover {
+        color: #b00;
+      }
+
+      .toggles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+      .toggle-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 5px 0;
+      }
+      .toggle-item input {
+        margin-top: 4px;
+      }
+      .toggle-item label {
+        cursor: pointer;
+        line-height: 1.4;
+      }
+      .toggle-desc {
+        display: block;
+        font-size: 12px;
+        color: #666;
+        padding-top: 5;
+      }
+
+      .save-container {
+        position: sticky;
+        bottom: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        text-align: right;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+      }
+      #save {
+        background: #e10f1a;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      #gh-footer {
+        padding: 5px;
+        align-items: center;
+        font-size: 12px;
+        display: flex;
+        gap: 2px;
+        color: #6b6b6b;
+      }
+      #gh-footer-link {
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      #save:hover {
+        background: #c00c16;
+      }
+      #status {
+        color: #2e7d32;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-weight: 500;
+        display: none;
+        font-weight: bold;
+      }
+      #save-reminder {
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-weight: 500;
+        font-size: 14px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <img src="assets/icon-full.png" width="85" height="85" />
+      <span><h1>Opciones</h1></span>
+    </div>
+
+    <div class="card">
+      <h2>Secciones a ocultar</h2>
+      <p style="color: #666; margin-bottom: 20px">
+        Opciones para ocultar secciones completas y contenido no deseado.
+      </p>
+      <div class="toggles-grid" id="toggles-container"></div>
+    </div>
+    <div class="card">
+      <h2>Ocultar por autor</h2>
+      <div class="list-input">
+        <input
+          type="text"
+          id="author-input"
+          placeholder="Ej: Enrique Corbella"
+        />
+        <button class="add-btn" id="add-author">Añadir</button>
+      </div>
+      <div id="authors-list" class="item-list"></div>
+      <p class="toggle-desc">Bloquea artículos escritos por estas personas.</p>
+    </div>
+
+    <div class="card">
+      <h2>Ocultar por texto en titular</h2>
+      <div class="list-input">
+        <input
+          type="text"
+          id="keyword-input"
+          placeholder="Ej: Influencer, zasca..."
+        />
+        <button class="add-btn" id="add-keyword">Añadir</button>
+      </div>
+      <div id="keywords-list" class="item-list"></div>
+      <p class="toggle-desc">
+        Bloquea artículos que contengan estas palabras en su titular.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Ocultar por nombre de sección</h2>
+      <div class="list-input">
+        <input
+          type="text"
+          id="kicker-input"
+          placeholder="Ej: Apuestas, Motor..."
+        />
+        <button class="add-btn" id="add-kicker">Añadir</button>
+      </div>
+      <div id="kickers-list" class="item-list"></div>
+      <p class="toggle-desc">
+        Bloquea artículos con este nombre de sección sobre su titular.
+      </p>
+    </div>
+
+    <div class="save-container">
+      <span id="gh-footer">
+        <img
+          src="assets/github-mark.svg"
+          alt="GitHub logo"
+          width="18"
+          style="padding-right: 5px"
+        />
+
+        by
+        <span id="gh-footer-link"
+          >@<a href="https://github.com/wrongpixels/marca-block" target="_blank"
+            >wrongpixels</a
+          ></span
+        ></span
+      >
+
+      <span id="status">¡Configuración guardada!</span>
+      <span
+        ><span id="save-reminder" style="padding-right: 10px"
+          >¡Guarda antes de salir! 👉</span
+        >
+        <button id="save">Guardar cambios</button></span
+      >
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
