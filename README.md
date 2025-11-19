@@ -72,11 +72,11 @@ Estoy mirando cómo publicar la extensión en stores oficiales (Chrome Web Store
 
 ### Opción A: Desde Releases (Recomendado)
 1. Ve a la sección de **[Releases](../../releases)** del repositorio.
-2. Descarga el archivo `.zip` (recomendado) o `.crx` de la última versión.
-3. Descomprime el contenido del archivo en una carpeta.
+2. Descarga el archivo `marca-block-x.x.x.zip` (recomendado) o `marca-block-x.x.x.crx`.
+3. Descomprime la carpeta que encontrarás dentro.
 4. En tu navegador, ve a `chrome://extensions/`, `brave://extensions/` o `edge://extensions/`.
-5. Activa el **"Modo de desarrollador"** (esquina superior derecha).
-6. Haz clic en **"Cargar descomprimida"** y selecciona la carpeta donde descomprimiste la extensión.
+5. Activa el **"Modo de desarrollador"** si no lo has hecho aún (esquina superior derecha).
+6. Haz clic en **"Cargar descomprimida"** y selecciona la carpeta descomprimida.
 
 #### Opción B: Desde el Código Fuente (Para desarrolladores)
 1. Clona este repositorio:
