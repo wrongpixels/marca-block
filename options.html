@@ -1,196 +1,202 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Opciones - Marca Blocke</title>
+    <meta charset="UTF-8" />
+    <title>Opciones - Marca Block</title>
     <style>
-      :root {
-        color-scheme: light dark;
-      }
       body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
-          sans-serif;
-        margin: 0;
-        padding: 16px;
-        max-width: 900px;
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f9f9f9;
+        color: #333;
       }
       h1 {
-        font-size: 1.25rem;
-        margin: 0 0 12px;
+        border-bottom: 2px solid #e10f1a;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
       }
       h2 {
-        font-size: 1.1rem;
-        margin: 0 0 8px;
-      }
-      .section {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 16px;
-      }
-      .grid {
-        display: grid;
-        gap: 8px;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 640px) {
-        .grid-3 {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-      }
-      label {
+        margin-top: 0;
+        font-size: 18px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+      .list-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
       }
       input[type='text'] {
-        width: 100%;
-        padding: 8px;
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
       }
-      button {
-        padding: 8px 12px;
+      button.add-btn {
+        background: #333;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 4px;
         cursor: pointer;
       }
-      ul {
-        list-style: none;
-        padding-left: 0;
-      }
-      li {
+      .item-list {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px dashed #ddd;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 30px;
       }
-      .muted {
-        color: #666;
-        font-size: 0.9em;
-      }
-      .row {
+      .tag {
+        background: #eee;
+        padding: 5px 12px;
+        border-radius: 15px;
         display: flex;
         align-items: center;
         gap: 8px;
-        flex-wrap: wrap;
+        font-size: 14px;
       }
-      .badge {
-        display: inline-block;
-        padding: 2px 6px;
-        border-radius: 999px;
-        background: #eee;
-        font-size: 0.8em;
+      .tag span {
+        cursor: pointer;
+        color: #e10f1a;
+        font-weight: bold;
+        padding: 0 2px;
       }
-      .danger {
-        background: #c62828;
-        color: #fff;
+      .tag span:hover {
+        color: #b00;
       }
-      .small {
-        font-size: 0.85em;
+
+      .toggles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+      .toggle-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 5px 0;
+      }
+      .toggle-item input {
+        margin-top: 4px;
+      }
+      .toggle-item label {
+        cursor: pointer;
+        line-height: 1.4;
+      }
+      .toggle-desc {
+        display: block;
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+      }
+
+      .save-container {
+        position: sticky;
+        bottom: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        text-align: right;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+      }
+      #save {
+        background: #e10f1a;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      #save:hover {
+        background: #c00c16;
+      }
+      #status {
+        color: #2e7d32;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-weight: 500;
       }
     </style>
   </head>
   <body>
     <h1>Marca Block – Opciones</h1>
 
-    <div class="section">
-      <label>
-        <input type="checkbox" id="enabled" />
-        Marca Block activo
-      </label>
-      <div class="muted">Desactiva para pausar la extensión temporalmente.</div>
-    </div>
-
-    <div class="section">
+    <div class="card">
       <h2>Secciones a ocultar</h2>
-      <div class="grid grid-3">
-        <label
-          ><input type="checkbox" data-key="TV_SOCIEDAD" />
-          TV/Sociedad/Bazar</label
-        >
-        <label
-          ><input type="checkbox" data-key="PRENSA" /> Prensa externa (El Mundo,
-          Tiramillas...)</label
-        >
-        <label><input type="checkbox" data-key="APUESTAS" /> Apuestas</label>
-        <label><input type="checkbox" data-key="MARCA_TV" /> Marca TV</label>
-        <label
-          ><input type="checkbox" data-key="SPONSORED" /> Contenido
-          patrocinado</label
-        >
-        <label
-          ><input type="checkbox" data-key="EMBEDDED_VIDEOS" /> Vídeos de Marca
-          TV camuflados como artículos</label
-        >
-        <label
-          ><input type="checkbox" data-key="AUTOPLAY_IFRAMES" /> Vídeos con
-          autoplay</label
-        >
-        <label
-          ><input type="checkbox" data-key="VIDEO_AUTOPLAY" /> Cualquier vídeo
-          con autoplay</label
-        >
-        <label
-          ><input type="checkbox" data-key="ARTICLE_SECONDARY_COLUMN" /> Columna
-          secundaria en artículos</label
-        >
-      </div>
-      <div class="muted small">
-        Opciones para ocultar secciones completas (como Marca TV) y contenido no
-        deseados (como vídeos).
+      <p style="color: #666; margin-bottom: 20px">
+        Opciones para ocultar secciones completas y contenido no deseado.
+      </p>
+      <div class="toggles-grid" id="toggles-container">
+        <!-- Generated by JS -->
       </div>
     </div>
 
-    <div class="section">
+    <div class="card">
       <h2>Ocultar por autor</h2>
-      <div class="row">
+      <div class="list-input">
         <input
           type="text"
-          id="authorInput"
-          placeholder="Añadir autor (ejemplo: ENRIQUE CORBELLA)"
+          id="author-input"
+          placeholder="Ej: Enrique Corbella"
         />
-        <button id="addAuthor">Añadir</button>
+        <button class="add-btn" id="add-author">Añadir</button>
       </div>
-      <ul id="authorsList"></ul>
-      <div class="muted">Bloquea artículos escritos por estas personas.</div>
+      <div id="authors-list" class="item-list"></div>
+      <p class="toggle-desc">Bloquea artículos escritos por estas personas.</p>
     </div>
 
-    <div class="section">
+    <div class="card">
       <h2>Ocultar por texto en titular</h2>
-      <div class="row">
+      <div class="list-input">
         <input
           type="text"
-          id="keywordInput"
-          placeholder="Añadir keyword (ejemplo: influencer)"
+          id="keyword-input"
+          placeholder="Ej: Influencer, zasca..."
         />
-        <button id="addKeyword">Añadir</button>
+        <button class="add-btn" id="add-keyword">Añadir</button>
       </div>
-      <ul id="keywordsList"></ul>
-      <div class="muted">
+      <div id="keywords-list" class="item-list"></div>
+      <p class="toggle-desc">
         Bloquea artículos que contengan estas palabras en su titular.
-      </div>
+      </p>
     </div>
 
-    <div class="section">
+    <div class="card">
       <h2>Ocultar por nombre de sección</h2>
-      <div class="row">
+      <div class="list-input">
         <input
           type="text"
-          id="kickerInput"
-          placeholder="Añadir secciones (ejemplo: MARCA COCHES)"
+          id="kicker-input"
+          placeholder="Ej: Apuestas, Motor..."
         />
-        <button id="addKicker">Añadir</button>
+        <button class="add-btn" id="add-kicker">Añadir</button>
       </div>
-      <ul id="kickersList"></ul>
-      <div class="muted">
+      <div id="kickers-list" class="item-list"></div>
+      <p class="toggle-desc">
         Bloquea artículos con este nombre de sección sobre su titular.
-      </div>
+      </p>
     </div>
 
-    <div class="section">
-      <button id="restoreDefaults" class="danger">
-        Restaura los valores por defecto
-      </button>
-      <span id="status" class="badge"></span>
+    <div class="save-container">
+      <span id="status">¡Configuración guardada!</span>
+      <button id="save">Guardar cambios</button>
     </div>
 
     <script src="options.js"></script>

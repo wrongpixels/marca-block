@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "MARCA Block",
-  "version": "0.2.0",
-  "description": "Oculta artículos, vídeos y secciones completas de MARCA.com por autor, palabra clave o tipo de contenido.",
-  "permissions": ["storage", "scripting"],
+  "version": "0.2.1",
+  "description": "Oculta artículos, vídeos y secciones completas de MARCA.com por autor, palabra clave y/o tipo de contenido.",
+  "permissions": ["storage", "tabs"],
   "host_permissions": ["https://www.marca.com/*", "https://marca.com/*"],
   "background": {
     "service_worker": "background.js",

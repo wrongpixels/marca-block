@@ -1,34 +1,8 @@
 const DEFAULTS = {
   enabled: true,
-  sectionToggles: {
-    TV_SOCIEDAD: true,
-    PRENSA: true,
-    APUESTAS: true,
-    MARCA_TV: true,
-    SPONSORED: true,
-    EMBEDDED_VIDEOS: true,
-    AUTOPLAY_IFRAMES: true,
-    VIDEO_AUTOPLAY: true,
-    ARTICLE_SECONDARY_COLUMN: true,
-  },
-  authors: [],
-  keywords: [],
-  kickers: [],
 }
 
-const getSettings = async () => {
-  const obj = await chrome.storage.local.get('settings')
-  if (!obj.settings) return DEFAULTS
-  return {
-    ...DEFAULTS,
-    ...obj.settings,
-    sectionToggles: {
-      ...DEFAULTS.sectionToggles,
-      ...(obj.settings.sectionToggles || {}),
-    },
-  }
-}
-
+//initialize defaults on install
 chrome.runtime.onInstalled.addListener(async () => {
   const existing = await chrome.storage.local.get('settings')
   if (!existing.settings) {
@@ -36,8 +10,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 })
 
+//we listen for changes in settings to notify open tabs immediately
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.settings) {
+    const isEnabled = changes.settings.newValue.enabled
+    updateBadgeStatus(isEnabled)
+
     chrome.tabs.query(
       { url: ['https://www.marca.com/*', 'https://marca.com/*'] },
       (tabs) => {
@@ -53,29 +31,43 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 })
 
-//to listen to know if the plugin is active or not
-chrome.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
-  if (!tab.url || !/\.?marca\.com/.test(new URL(tab.url).hostname)) {
-    return
+//helper to set visual state based on Enabled/Disabled only
+const updateBadgeStatus = (enabled) => {
+  if (!enabled) {
+    chrome.action.setBadgeText({ text: 'OFF' })
+    chrome.action.setBadgeBackgroundColor({ color: '#9e9e9e' })
+  } else {
+    chrome.action.setBadgeBackgroundColor({ color: '#e10f1a' })
   }
-  const s = await getSettings()
-  chrome.action.setBadgeText({ tabId, text: s.enabled ? 'ON' : 'OFF' })
-  chrome.action.setBadgeBackgroundColor({
-    tabId,
-    color: s.enabled ? '#2e7d32' : '#9e9e9e',
-  })
-})
+}
 
-//to listen to the aprox count of blocked elements
+//listen for the blocked count from content.js
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === 'blocked-count' && sender.tab?.id) {
+    //only show number if > 0
+    const text = msg.count > 0 ? `${msg.count}` : ''
     chrome.action.setBadgeText({
       tabId: sender.tab.id,
-      text: msg.count > 0 ? `${msg.count}` : 'ON',
+      text: text,
     })
     chrome.action.setBadgeBackgroundColor({
       tabId: sender.tab.id,
-      color: '#ff9800',
+      color: '#e10f1a',
     })
+  }
+})
+
+//first check on tab update
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (
+    changeInfo.status === 'complete' &&
+    tab.url &&
+    /marca\.com/.test(tab.url)
+  ) {
+    const { settings } = await chrome.storage.local.get('settings')
+    if (settings && !settings.enabled) {
+      chrome.action.setBadgeText({ tabId, text: 'OFF' })
+      chrome.action.setBadgeBackgroundColor({ tabId, color: '#9e9e9e' })
+    }
   }
 })

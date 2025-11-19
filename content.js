@@ -31,22 +31,17 @@ const DEFAULTS = {
 let settingsCache = null
 let observer = null
 let styleTag = null
-let blockedCount = 0
+let debounceTimer = null
 
 const normalizeString = (string) => (string || '').trim().toLowerCase()
 
 const buildCssFromToggles = (s) => {
-  if (!s.enabled) {
-    return ''
-  }
+  if (!s.enabled) return ''
+
   const hideList = []
   for (const [key, on] of Object.entries(s.sectionToggles)) {
-    if (!on) {
-      continue
-    }
-    const sel = SELECTORS[key]
-    if (sel) {
-      hideList.push(sel)
+    if (on && SELECTORS[key]) {
+      hideList.push(SELECTORS[key])
     }
   }
   return hideList.length
@@ -57,13 +52,14 @@ const buildCssFromToggles = (s) => {
 const ensureStyle = (css) => {
   if (!styleTag) {
     styleTag = document.createElement('style')
-    styleTag.id = 'marca-custom-blocker-style'
+    styleTag.id = 'marca-block-style'
     ;(document.head || document.documentElement).appendChild(styleTag)
   }
-  styleTag.textContent = css
+  if (styleTag.textContent !== css) {
+    styleTag.textContent = css
+  }
 }
 
-//to get the parent element of the article to block
 const getArticleUnit = (el) => {
   let parent = el
   while (parent && !parent.classList.contains('ue-l-cover-grid__unit')) {
@@ -72,50 +68,43 @@ const getArticleUnit = (el) => {
   return parent
 }
 
-//what actually hides the element. Returns 1 if worked to count hidden elements
 const hideElement = (el) => {
-  if (!el) {
-    return 0
-  }
+  if (!el) return 0
+  if (el.style.display === 'none') return 0 // Already counted/hidden
   el.style.setProperty('display', 'none', 'important')
-  {
-    return 1
-  }
+  return 1
 }
 
-//our logic to hide elements in a list. Returns the number of blocked elements for our count
 const blockByList = (units, checkFn, list) => {
   let count = 0
-  if (list.length === 0) {
-    return count
-  }
+  if (!list || list.length === 0) return count
+
   const normList = list.map(normalizeString).filter(Boolean)
   units.forEach((unit) => {
-    if (checkFn(unit, normList)) {
+    // Only check visible units to avoid double counting
+    if (unit.style.display !== 'none' && checkFn(unit, normList)) {
       count += hideElement(unit)
     }
   })
   return count
 }
 
-//checks if the article unit has been written by a specific author
+//to block by authors
 const checkAuthor = (unit, normList) => {
   const byline = unit.querySelector('.ue-c-cover-content__byline-name')
   if (byline && byline.textContent) {
-    if (normList.some((a) => normalizeString(byline.textContent).includes(a))) {
+    if (normList.some((a) => normalizeString(byline.textContent).includes(a)))
       return true
-    }
   }
+  //fallback for articles inside the unit
   const spans = unit.querySelectorAll('article span')
   for (const sp of spans) {
-    if (normList.some((a) => normalizeString(sp.textContent).includes(a))) {
+    if (normList.some((a) => normalizeString(sp.textContent).includes(a)))
       return true
-    }
   }
   return false
 }
-
-//checks if an article unit contains any blocked string in the headline
+//to block by headline keywords
 const checkWordsInHeadline = (unit, normList) => {
   const headline = unit.querySelector('.ue-c-cover-content__headline')
   return (
@@ -124,7 +113,7 @@ const checkWordsInHeadline = (unit, normList) => {
   )
 }
 
-//to check the "section name" (FÚTBOL, BUNDESLIGA...) above the headlines, called "kicker"
+//to block by headline kicker keywords
 const checkWordsInKicker = (unit, normList) => {
   const kicker = unit.querySelector('.ue-c-cover-content__kicker')
   return (
@@ -132,25 +121,24 @@ const checkWordsInKicker = (unit, normList) => {
     normList.some((k) => normalizeString(kicker.textContent).includes(k))
   )
 }
-
-//to block MarcaTV videos from the frontpage
+//to block embedded videos
 const blockEmbeddedVideos = () => {
   let count = 0
   document.querySelectorAll(SELECTORS.EMBEDDED_VIDEOS).forEach((icon) => {
     const unit = getArticleUnit(icon)
-    if (unit) {
+    if (unit && unit.style.display !== 'none') {
       count += hideElement(unit)
     }
   })
   return count
 }
 
-//to block videos with an autoplay iFrame
+//to block autoplay iFrames
 const blockAutoplayIframes = () => {
   let count = 0
   document.querySelectorAll(SELECTORS.AUTOPLAY_IFRAMES).forEach((iframe) => {
     const unit = getArticleUnit(iframe)
-    if (unit) {
+    if (unit && unit.style.display !== 'none') {
       count += hideElement(unit)
     }
   })
@@ -159,9 +147,7 @@ const blockAutoplayIframes = () => {
 
 const loadSettings = async () => {
   const { settings } = await chrome.storage.local.get('settings')
-  if (!settings) {
-    return DEFAULTS
-  }
+  if (!settings) return DEFAULTS
   return {
     ...DEFAULTS,
     ...settings,
@@ -174,17 +160,20 @@ const loadSettings = async () => {
 
 const applyAll = () => {
   if (!settingsCache || !settingsCache.enabled) {
-    blockedCount = 0
     ensureStyle('')
+    chrome.runtime
+      .sendMessage({ type: 'blocked-count', count: 0 })
+      .catch(() => {})
     return
   }
-  blockedCount = 0
+
+  let blockedCount = 0
+
   const css = buildCssFromToggles(settingsCache)
   ensureStyle(css)
 
   const units = Array.from(document.querySelectorAll('.ue-l-cover-grid__unit'))
 
-  //for lists
   blockedCount += blockByList(units, checkAuthor, settingsCache.authors)
   blockedCount += blockByList(
     units,
@@ -193,7 +182,6 @@ const applyAll = () => {
   )
   blockedCount += blockByList(units, checkWordsInKicker, settingsCache.kickers)
 
-  //for individual elements
   if (settingsCache.sectionToggles.EMBEDDED_VIDEOS) {
     blockedCount += blockEmbeddedVideos()
   }
@@ -207,12 +195,11 @@ const applyAll = () => {
 }
 
 const startObserver = () => {
-  if (observer) {
-    observer.disconnect()
-  }
+  if (observer) observer.disconnect()
   observer = new MutationObserver(() => {
     if (settingsCache?.enabled) {
-      applyAll()
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(applyAll, 200)
     }
   })
   observer.observe(document.documentElement, { subtree: true, childList: true })

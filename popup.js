@@ -1,57 +1,47 @@
-const DEFAULTS = {
-  enabled: true,
-  sectionToggles: {
-    TV_SOCIEDAD: true,
-    PRENSA: true,
-    APUESTAS: true,
-    MARCA_TV: true,
-    SPONSORED: true,
-    EMBEDDED_VIDEOS: true,
-    AUTOPLAY_IFRAMES: true,
-    VIDEO_AUTOPLAY: true,
-    ARTICLE_SECONDARY_COLUMN: true,
-  },
-  authors: [],
-  keywords: [],
-  kickers: [],
-}
+const DEFAULTS = { enabled: true }
 
 const getSettings = async () => {
   const obj = await chrome.storage.local.get('settings')
-  if (!obj.settings) return DEFAULTS
-  return {
-    ...DEFAULTS,
-    ...obj.settings,
-    sectionToggles: {
-      ...DEFAULTS.sectionToggles,
-      ...(obj.settings.sectionToggles || {}),
-    },
-  }
-}
-
-const save = async (s) => {
-  await chrome.storage.local.set({ settings: s })
+  return { ...DEFAULTS, ...(obj.settings || {}) }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   let state = await getSettings()
+
   const enabledEl = document.getElementById('enabled')
+  const statusText = document.getElementById('status-text')
   const refreshBtn = document.getElementById('refresh')
+  const optionsBtn = document.getElementById('open-options')
 
-  enabledEl.checked = state.enabled
+  const updateUI = () => {
+    enabledEl.checked = state.enabled
+    statusText.textContent = state.enabled ? 'Activo' : 'Pausado'
+    statusText.style.color = state.enabled ? '#333' : '#999'
+  }
 
-  enabledEl.addEventListener('change', async () => {
-    state.enabled = enabledEl.checked
-    await save(state)
-  })
+  if (enabledEl) {
+    updateUI()
+    enabledEl.addEventListener('change', async () => {
+      state.enabled = enabledEl.checked
+      updateUI()
+      const current = await getSettings()
+      current.enabled = state.enabled
+      await chrome.storage.local.set({ settings: current })
+    })
+  }
 
-  refreshBtn.addEventListener('click', async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-    if (tab && tab.id) {
-      try {
-        await chrome.tabs.sendMessage(tab.id, { type: 'settings-updated' })
-      } catch (e) {}
-    }
-    window.close()
-  })
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) chrome.tabs.reload(tabs[0].id)
+        window.close()
+      })
+    })
+  }
+
+  if (optionsBtn) {
+    optionsBtn.addEventListener('click', () => {
+      chrome.runtime.openOptionsPage()
+    })
+  }
 })
