@@ -68,13 +68,13 @@ La parte más potente de la extensión. Crea tus propias listas negras:
 
 ### 🚀 Instalación
 
-Estoy trabajando en publicar la extensión en las tiendas oficiales (Chrome Web Store, Edge Add-ons...). Mientras tanto, puedes instalarla de forma manual muy fácilmente en cualquier navegador basado en Chromium (Chrome, Brave, Edge...).
+Estoy mirando cómo publicar la extensión en stores oficiales (Chrome Web Store, Edge...). Mientras tanto, se puede instalar de forma manual en cualquier navegador basado en Chromium (Chrome, Brave, Edge...).
 
 ### Opción A: Desde Releases (Recomendado)
-1. Ve a la sección de **[Releases](../../releases)** de este repositorio.
-2. Descarga el archivo `.zip` o `.crx` de la última versión.
-3. Descomprime el archivo en una carpeta.
-4. Abre tu navegador y ve a `chrome://extensions/`.
+1. Ve a la sección de **[Releases](../../releases)** del repositorio.
+2. Descarga el archivo `.zip` (recomendado) o `.crx` de la última versión.
+3. Descomprime el contenido del archivo en una carpeta.
+4. En tu navegador, ve a `chrome://extensions/`, `brave://extensions/` o `edge://extensions/`.
 5. Activa el **"Modo de desarrollador"** (esquina superior derecha).
 6. Haz clic en **"Cargar descomprimida"** y selecciona la carpeta donde descomprimiste la extensión.
 
