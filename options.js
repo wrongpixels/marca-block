@@ -117,9 +117,9 @@ const addItem = (type, inputId) => {
     currentSettings[type].push(val)
     input.value = ''
     renderAll()
+    unsavedChanges = true
+    updateSaveButton()
   }
-  unsavedChanges = true
-  updateSaveButton()
 }
 
 const updateSaveButton = (status) => {
@@ -128,15 +128,18 @@ const updateSaveButton = (status) => {
   saveButton.ariaDisabled = !unsavedChanges
   saveButton.disabled = !unsavedChanges
   saveButton.style.cursor = unsavedChanges ? 'pointer' : 'default'
+  const reminder = document.getElementById('save-reminder')
+  if (unsavedChanges) {
+    document.getElementById('status').style.display = 'none'
+    if (reminder.style.opacity === 0 || reminder.style.display === 'none') {
+      reminder.style.display = 'inline'
+      setTimeout(() => (reminder.style.opacity = '1'), 100)
+    }
+  } else {
+    reminder.style.opacity = 0
+    reminder.style.display = 'none'
+  }
 }
-
-//listeners
-document.getElementById('add-author').onclick = () =>
-  addItem('authors', 'author-input')
-document.getElementById('add-keyword').onclick = () =>
-  addItem('keywords', 'keyword-input')
-document.getElementById('add-kicker').onclick = () =>
-  addItem('kickers', 'kicker-input')
 
 const setupEnterKey = (inputId, btnId) => {
   document.getElementById(inputId).addEventListener('keypress', (e) => {
@@ -145,25 +148,38 @@ const setupEnterKey = (inputId, btnId) => {
     }
   })
 }
-setupEnterKey('author-input', 'add-author')
-setupEnterKey('keyword-input', 'add-keyword')
-setupEnterKey('kicker-input', 'add-kicker')
 
-document.getElementById('save').onclick = async () => {
-  await chrome.storage.local.set({ settings: currentSettings })
-  lastSavedSettings = currentSettings
-  unsavedChanges = false
-  const status = document.getElementById('status')
-  status.style.opacity = '1'
-  setTimeout(() => (status.style.opacity = '0'), 2000)
+document.addEventListener('DOMContentLoaded', () => {
+  //listeners
+  document.getElementById('add-author').onclick = () =>
+    addItem('authors', 'author-input')
+  document.getElementById('add-keyword').onclick = () =>
+    addItem('keywords', 'keyword-input')
+  document.getElementById('add-kicker').onclick = () =>
+    addItem('kickers', 'kicker-input')
 
-  chrome.tabs.query({ url: '*://*.marca.com/*' }, (tabs) => {
-    tabs.forEach((tab) => {
-      chrome.tabs
-        .sendMessage(tab.id, { type: 'settings-updated' })
-        .catch(() => {})
+  setupEnterKey('author-input', 'add-author')
+  setupEnterKey('keyword-input', 'add-keyword')
+  setupEnterKey('kicker-input', 'add-kicker')
+
+  document.getElementById('save').onclick = async () => {
+    await chrome.storage.local.set({ settings: currentSettings })
+    lastSavedSettings = currentSettings
+    unsavedChanges = false
+    updateSaveButton()
+    const status = document.getElementById('status')
+    status.style.display = 'inline'
+    setTimeout(() => (status.style.opacity = '1'), 100)
+    setTimeout(() => (status.style.opacity = '0'), 4000)
+
+    chrome.tabs.query({ url: '*://*.marca.com/*' }, (tabs) => {
+      tabs.forEach((tab) => {
+        chrome.tabs
+          .sendMessage(tab.id, { type: 'settings-updated' })
+          .catch(() => {})
+      })
     })
-  })
-}
+  }
 
-init()
+  init()
+})

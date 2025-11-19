@@ -6,7 +6,7 @@
   "permissions": ["storage", "tabs"],
   "host_permissions": ["https://www.marca.com/*", "https://marca.com/*"],
   "background": {
-    "service_worker": "src/background.js",
+    "service_worker": "background.js",
     "type": "module"
   },
   "action": {
@@ -17,7 +17,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.marca.com/*", "https://marca.com/*"],
-      "js": ["src/content.js"],
+      "js": ["content.js"],
       "run_at": "document_start"
     }
   ],

@@ -40,6 +40,8 @@ const buildCssFromToggles = (s) => {
 
   const hideList = []
   for (const [key, on] of Object.entries(s.sectionToggles)) {
+    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') continue
+
     if (on && SELECTORS[key]) {
       hideList.push(SELECTORS[key])
     }
@@ -70,7 +72,8 @@ const getArticleUnit = (el) => {
 
 const hideElement = (el) => {
   if (!el) return 0
-  if (el.style.display === 'none') return 0 // Already counted/hidden
+  if (el.style.display === 'none') return 0
+
   el.style.setProperty('display', 'none', 'important')
   return 1
 }
@@ -81,7 +84,6 @@ const blockByList = (units, checkFn, list) => {
 
   const normList = list.map(normalizeString).filter(Boolean)
   units.forEach((unit) => {
-    // Only check visible units to avoid double counting
     if (unit.style.display !== 'none' && checkFn(unit, normList)) {
       count += hideElement(unit)
     }
@@ -96,7 +98,6 @@ const checkAuthor = (unit, normList) => {
     if (normList.some((a) => normalizeString(byline.textContent).includes(a)))
       return true
   }
-  //fallback for articles inside the unit
   const spans = unit.querySelectorAll('article span')
   for (const sp of spans) {
     if (normList.some((a) => normalizeString(sp.textContent).includes(a)))
@@ -104,6 +105,7 @@ const checkAuthor = (unit, normList) => {
   }
   return false
 }
+
 //to block by headline keywords
 const checkWordsInHeadline = (unit, normList) => {
   const headline = unit.querySelector('.ue-c-cover-content__headline')
@@ -121,6 +123,7 @@ const checkWordsInKicker = (unit, normList) => {
     normList.some((k) => normalizeString(kicker.textContent).includes(k))
   )
 }
+
 //to block embedded videos
 const blockEmbeddedVideos = () => {
   let count = 0
@@ -142,6 +145,19 @@ const blockAutoplayIframes = () => {
       count += hideElement(unit)
     }
   })
+  return count
+}
+
+const countCssHiddenElements = (settings) => {
+  let count = 0
+  for (const [key, on] of Object.entries(settings.sectionToggles)) {
+    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') continue
+
+    if (on && SELECTORS[key]) {
+      const elements = document.querySelectorAll(SELECTORS[key])
+      count += elements.length
+    }
+  }
   return count
 }
 
@@ -171,6 +187,8 @@ const applyAll = () => {
 
   const css = buildCssFromToggles(settingsCache)
   ensureStyle(css)
+
+  blockedCount += countCssHiddenElements(settingsCache)
 
   const units = Array.from(document.querySelectorAll('.ue-l-cover-grid__unit'))
 
