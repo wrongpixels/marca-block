@@ -1,7 +1,7 @@
 # MARCA Block 🛡️⚽
+<img alt="image" src="./assets/icon128.png" />
 
-**Deporte sin ruido**.
-
+### **Deporte sin ruido**.
 Navega por MARCA.com sin el clickbait, los vídeos con autoplay ni todo ese contenido que no te interesa.
 
 ![Version](https://img.shields.io/badge/version-0.2.1-blue) ![Status](https://img.shields.io/badge/status-beta-orange)
@@ -86,5 +86,3 @@ Estoy trabajando en publicar la extensión en las tiendas oficiales (Chrome Web 
 ### 🤝 Contribuir, feedback etc 
 
 Este es un proyecto personal, pero abierto. Si tienes ideas para mejorar los filtros, encuentras algún error o se te ocurre algo nuevo... pues, no sé, dímelo, abre un Issue o envía un Pull Request.
-
-¡Disfruta del deporte sin ruido!
