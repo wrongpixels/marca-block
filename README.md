@@ -28,9 +28,9 @@ Como debería ser.
 
 ---
 
-### ⚠️ ¿Qué NO es MARCA Block?
+### 🚫 ¿Qué NO es MARCA Block?
 
-**Marca Block NO es un AdBlock.**
+**Marca Block *NO es un AdBlock.***
 
 Aunque la extensión bloquee secciones de "Contenido patrocinado" y formatos publicitarios agresivos (vídeos en autoplay, banners gigantes, publicidad camuflada...), **su objetivo no es eliminar la publicidad legítima** del medio.
 
