@@ -29,6 +29,8 @@ const DEFAULTS = {
 }
 
 let currentSettings = { ...DEFAULTS }
+let lastSavedSettings = { ...DEFAULTS }
+let unsavedChanges = false
 
 const init = async () => {
   const data = await chrome.storage.local.get('settings')
@@ -56,6 +58,7 @@ const renderAll = () => {
     removeItem('kickers', idx)
   )
   renderToggles()
+  updateSaveButton()
 }
 
 const renderList = (elementId, items, removeCb) => {
@@ -65,7 +68,10 @@ const renderList = (elementId, items, removeCb) => {
     const tag = document.createElement('div')
     tag.className = 'tag'
     tag.innerHTML = `${item} <span>&times;</span>`
-    tag.querySelector('span').onclick = () => removeCb(idx)
+    tag.querySelector('span').onclick = () => {
+      removeCb(idx)
+      updateSaveButton()
+    }
     container.appendChild(tag)
   })
 }
@@ -83,6 +89,8 @@ const renderToggles = () => {
     checkbox.checked = currentSettings.sectionToggles[key]
     checkbox.onchange = (e) => {
       currentSettings.sectionToggles[key] = e.target.checked
+      unsavedChanges = true
+      updateSaveButton()
     }
 
     const label = document.createElement('label')
@@ -98,6 +106,8 @@ const renderToggles = () => {
 const removeItem = (type, index) => {
   currentSettings[type].splice(index, 1)
   renderAll()
+  unsavedChanges = true
+  updateSaveButton()
 }
 
 const addItem = (type, inputId) => {
@@ -108,6 +118,16 @@ const addItem = (type, inputId) => {
     input.value = ''
     renderAll()
   }
+  unsavedChanges = true
+  updateSaveButton()
+}
+
+const updateSaveButton = (status) => {
+  const saveButton = document.getElementById('save')
+  saveButton.style.opacity = unsavedChanges ? 1 : 0.2
+  saveButton.ariaDisabled = !unsavedChanges
+  saveButton.disabled = !unsavedChanges
+  saveButton.style.cursor = unsavedChanges ? 'pointer' : 'default'
 }
 
 //listeners
@@ -120,7 +140,9 @@ document.getElementById('add-kicker').onclick = () =>
 
 const setupEnterKey = (inputId, btnId) => {
   document.getElementById(inputId).addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') document.getElementById(btnId).click()
+    if (e.key === 'Enter') {
+      document.getElementById(btnId).click()
+    }
   })
 }
 setupEnterKey('author-input', 'add-author')
@@ -129,7 +151,8 @@ setupEnterKey('kicker-input', 'add-kicker')
 
 document.getElementById('save').onclick = async () => {
   await chrome.storage.local.set({ settings: currentSettings })
-
+  lastSavedSettings = currentSettings
+  unsavedChanges = false
   const status = document.getElementById('status')
   status.style.opacity = '1'
   setTimeout(() => (status.style.opacity = '0'), 2000)
