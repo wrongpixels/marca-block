@@ -4,13 +4,16 @@
 
 Navega por MARCA.com sin el clickbait, los vídeos con autoplay ni todo ese contenido que no te interesa.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue) ![Status](https://img.shields.io/badge/status-beta-orange)
+![Version](https://img.shields.io/badge/version-0.2.1-blue) ![Status](https://img.shields.io/badge/status-beta-orange)
+<p align="center">
+<img height="600" alt="image" src="https://github.com/user-attachments/assets/40e1c316-42e8-4b6e-abe6-9d2f151e8ae4" />
+</p>
 
 ### ¿Por qué he hecho esto?
 
 Simplemente, porque no soporto el rumbo que han tomado las webs deportivas.
 
-Hemos llegado al punto que el 60% del contenido es relleno, famoseo, clickbait y demás titulares intrascendentes ("arden las redes!!", "influencer X ha dicho Y...", "ayer en El Hormiguero...").
+Hemos llegado al punto que más de la mitad del contenido es puro relleno, famoseo, clickbait y demás titulares intrascendentes ("arden las redes!!", "influencer X ha dicho Y...", "ayer en El Hormiguero...").
 
 A esto súmale prácticas inaceptables como vídeos con autoplay, canales de Twitch emitiendo sin permiso, y banners gigantes haciendo que la experiencia de usuario sea simplemente miserable.
 
