@@ -4,10 +4,11 @@ const SECTION_LABELS = {
   APUESTAS: 'Apuestas',
   MARCA_TV: 'Marca TV',
   SPONSORED: 'Contenido patrocinado',
-  EMBEDDED_VIDEOS: 'Vídeos de Marca TV camuflados como artículos',
-  AUTOPLAY_IFRAMES: 'Vídeos con autoplay (iFrames)',
-  VIDEO_AUTOPLAY: 'Cualquier vídeo con autoplay flotante',
-  ARTICLE_SECONDARY_COLUMN: 'Columna secundaria en artículos',
+  EMBEDDED_VIDEOS: 'Artículos que lleven a un vídeo',
+  AUTOPLAY_IFRAMES: 'Vídeos de Marca',
+  VIDEO_AUTOPLAY: 'Vídeos flotantes con autoplay',
+  ARTICLE_SECONDARY_COLUMN:
+    'Columnas adicionales (Últimas noticias, relacionado...), ',
 }
 
 const DEFAULTS = {

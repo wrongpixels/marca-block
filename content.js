@@ -4,6 +4,7 @@ const SELECTORS = {
   APUESTAS: '.ue-l-cover-grid.flex-territorio-apuestas',
   MARCA_TV: '.ue-l-cover-grid.flex-video-marca-tv',
   SPONSORED: '[aria-roledescription="Publicidad"]',
+  SPONSORED_ARTICLE: '.ue-c-cover-content--is-branded',
   EMBEDDED_VIDEOS: '.ue-c-cover-content__video-duration-icon',
   AUTOPLAY_IFRAMES: 'iframe[allow*="autoplay"]',
   VIDEO_AUTOPLAY: '.ue-c-video-player-frame',
@@ -36,11 +37,15 @@ let debounceTimer = null
 const normalizeString = (string) => (string || '').trim().toLowerCase()
 
 const buildCssFromToggles = (s) => {
-  if (!s.enabled) return ''
+  if (!s.enabled) {
+    return ''
+  }
 
   const hideList = []
   for (const [key, on] of Object.entries(s.sectionToggles)) {
-    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') continue
+    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') {
+      continue
+    }
 
     if (on && SELECTORS[key]) {
       hideList.push(SELECTORS[key])
@@ -63,16 +68,30 @@ const ensureStyle = (css) => {
 }
 
 const getArticleUnit = (el) => {
-  let parent = el
-  while (parent && !parent.classList.contains('ue-l-cover-grid__unit')) {
-    parent = parent.parentElement
+  if (!el) {
+    return null
   }
-  return parent
+
+  const gridUnit = el.closest('.ue-l-cover-grid__unit')
+  if (gridUnit) {
+    return gridUnit
+  }
+
+  const mediaWrapper = el.closest('.ue-c-article__media')
+  if (mediaWrapper) {
+    return mediaWrapper
+  }
+
+  return null
 }
 
 const hideElement = (el) => {
-  if (!el) return 0
-  if (el.style.display === 'none') return 0
+  if (!el) {
+    return 0
+  }
+  if (el.style.display === 'none') {
+    return 0
+  }
 
   el.style.setProperty('display', 'none', 'important')
   return 1
@@ -80,7 +99,9 @@ const hideElement = (el) => {
 
 const blockByList = (units, checkFn, list) => {
   let count = 0
-  if (!list || list.length === 0) return count
+  if (!list || list.length === 0) {
+    return count
+  }
 
   const normList = list.map(normalizeString).filter(Boolean)
   units.forEach((unit) => {
@@ -95,13 +116,15 @@ const blockByList = (units, checkFn, list) => {
 const checkAuthor = (unit, normList) => {
   const byline = unit.querySelector('.ue-c-cover-content__byline-name')
   if (byline && byline.textContent) {
-    if (normList.some((a) => normalizeString(byline.textContent).includes(a)))
+    if (normList.some((a) => normalizeString(byline.textContent).includes(a))) {
       return true
+    }
   }
   const spans = unit.querySelectorAll('article span')
   for (const sp of spans) {
-    if (normList.some((a) => normalizeString(sp.textContent).includes(a)))
+    if (normList.some((a) => normalizeString(sp.textContent).includes(a))) {
       return true
+    }
   }
   return false
 }
@@ -136,6 +159,24 @@ const blockEmbeddedVideos = () => {
   return count
 }
 
+//to block extra sponsored articles and content
+const blockSponsoredContent = () => {
+  let count = 0
+  const combinedSelector = `${SELECTORS.SPONSORED_ARTICLE}, .publicidad, .sm-it-main-container, .teads-inread, .teads-ui-components-adchoices, .trc_spotlight_widget, .GoogleActiveViewInnerContainer, .commercial`
+
+  document.querySelectorAll(combinedSelector).forEach((element) => {
+    let unitToHide = getArticleUnit(element)
+    if (!unitToHide) {
+      unitToHide = element
+    }
+    if (unitToHide && unitToHide.style.display !== 'none') {
+      count += hideElement(unitToHide)
+    }
+  })
+
+  return count
+}
+
 //to block autoplay iFrames
 const blockAutoplayIframes = () => {
   let count = 0
@@ -151,7 +192,9 @@ const blockAutoplayIframes = () => {
 const countCssHiddenElements = (settings) => {
   let count = 0
   for (const [key, on] of Object.entries(settings.sectionToggles)) {
-    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') continue
+    if (key === 'EMBEDDED_VIDEOS' || key === 'AUTOPLAY_IFRAMES') {
+      continue
+    }
 
     if (on && SELECTORS[key]) {
       const elements = document.querySelectorAll(SELECTORS[key])
@@ -163,7 +206,9 @@ const countCssHiddenElements = (settings) => {
 
 const loadSettings = async () => {
   const { settings } = await chrome.storage.local.get('settings')
-  if (!settings) return DEFAULTS
+  if (!settings) {
+    return DEFAULTS
+  }
   return {
     ...DEFAULTS,
     ...settings,
@@ -199,6 +244,9 @@ const applyAll = () => {
     settingsCache.keywords
   )
   blockedCount += blockByList(units, checkWordsInKicker, settingsCache.kickers)
+  if (settingsCache.sectionToggles.SPONSORED) {
+    blockedCount += blockSponsoredContent()
+  }
 
   if (settingsCache.sectionToggles.EMBEDDED_VIDEOS) {
     blockedCount += blockEmbeddedVideos()
@@ -213,7 +261,9 @@ const applyAll = () => {
 }
 
 const startObserver = () => {
-  if (observer) observer.disconnect()
+  if (observer) {
+    observer.disconnect()
+  }
   observer = new MutationObserver(() => {
     if (settingsCache?.enabled) {
       clearTimeout(debounceTimer)
