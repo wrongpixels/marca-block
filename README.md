@@ -43,6 +43,9 @@ Si buscas una experiencia "sin anuncios", existen extensiones específicas para 
 Dentro del panel de opciones, tienes el control total sobre lo que aparece en tu portada:
 
 ### 🚫 Bloqueo de Secciones y Molestias
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/2be88516-f921-41ee-98e7-706afbaf5745" />
+
 Puedes activar o desactivar selectivamente:
 *   **TV / Sociedad / Bazar:** Adiós a las noticias de cotilleo y televisión.
 *   **Prensa Externa:** Oculta los bloques de enlaces a El Mundo, Tiramillas, etc.
@@ -53,6 +56,9 @@ Puedes activar o desactivar selectivamente:
 *   **Contenido Patrocinado:** Elimina artículos y contenido que son publicidad directa.
 
 ### 🕵️ Filtros Personalizados
+
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/b01afdd6-5fcb-46d6-887b-8bf97adb06fe" />
+
 La parte más potente de la extensión. Crea tus propias listas negras:
 *   **Por Autor:** ¿No te gusta el contenido de un periodista concreto? Añade su nombre y sus artículos desaparecerán (ej: "Enrique Corbella").
 *   **Por Texto en Titular:** Filtra noticias con titulares que no te interesen (ej: "influencer", "zasca").
