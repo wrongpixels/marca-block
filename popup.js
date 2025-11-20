@@ -15,9 +15,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const updateUI = () => {
     enabledEl.checked = state.enabled
-    statusText.textContent = state.enabled ? 'Activo' : 'Pausado'
-    statusText.style.color = state.enabled ? '#333' : '#999'
+    statusText.textContent = state.enabled ? 'Activo' : 'Inactivo'
+    statusText.style.color = state.enabled ? '#01a373' : '#999'
   }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0]
+    if (activeTab && activeTab.url) {
+      try {
+        const url = new URL(activeTab.url)
+        if (url.hostname.includes('marca.com')) {
+          refreshBtn.style.display = 'flex'
+        }
+      } catch (e) {}
+    }
+  })
 
   if (enabledEl) {
     updateUI()
@@ -27,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const current = await getSettings()
       current.enabled = state.enabled
       await chrome.storage.local.set({ settings: current })
+      reloadCurrentTabIfMarca()
     })
   }
 
@@ -41,7 +54,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (optionsBtn) {
     optionsBtn.addEventListener('click', () => {
-      chrome.runtime.openOptionsPage()
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage()
+      } else {
+        window.open(chrome.runtime.getURL('options.html'))
+      }
     })
   }
 })
+
+const reloadCurrentTabIfMarca = () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0]
+
+    if (activeTab && activeTab.url) {
+      try {
+        const currentUrl = new URL(activeTab.url)
+        if (currentUrl.hostname.includes('marca.com')) {
+          chrome.tabs.reload(activeTab.id)
+        }
+      } catch (_e) {}
+    }
+  })
+}
