@@ -81,7 +81,7 @@ Estoy mirando cómo publicar la extensión en stores oficiales (Chrome Web Store
 #### Opción B: Desde el Código Fuente (Para desarrolladores)
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/tu-usuario/marca-block.git
+   git clone https://github.com/wrongpixels/marca-block.git
    ```
 2. Abre tu navegador y ve a chrome://extensions/.
 3. Activa el **"Modo de desarrollador"** (esquina superior derecha).
