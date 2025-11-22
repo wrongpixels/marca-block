@@ -1,10 +1,11 @@
+<img height="150" alt="image" src="./assets/icon-full.png" />
+
 # MARCA Block 🛡️⚽
-<img alt="image" src="./assets/icon128.png" />
+[![GitHub Release](https://img.shields.io/github/v/release/wrongpixels/marca-block)](https://github.com/wrongpixels/marca-block/releases/latest)
 
 ### **Deporte sin ruido**.
 Navega por MARCA.com sin el clickbait, los vídeos con autoplay ni todo ese contenido que no te interesa.
 
-[![GitHub Release](https://img.shields.io/github/v/release/wrongpixels/marca-block)](https://github.com/wrongpixels/marca-block/releases/latest)
 <p align="center">
 <img height="600" alt="image" src="https://github.com/user-attachments/assets/40e1c316-42e8-4b6e-abe6-9d2f151e8ae4" />
 </p>
