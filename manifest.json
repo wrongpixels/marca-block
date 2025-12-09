@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MARCA Block",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApEKf+NaM9ey9CtXU07KMOe/VaVUmA0JQsMHvnKVwCvUusUHyrQ6d0xXCtyTGGRuk1kGn7R+Uu6B19i4S49b2pzAETN/5VSghF24iSswlzxDcw4ghqlMBmBw9DCE5gxjxIpdvDd1DNTR53Ci3M8FlBcy5mtyEvjkVHHV9McWOdKtSaA0bHBip267PCR/43YtPsjjuRy2Xr+x/7MZ4Ua1NqujpBu6QjEw/8JZSy5wyWJsYXZHSCGIBSJmedSaao+3R05X41p0KP5E6NFr7aVwVuYKLF9KKY3yGBpEL2Iq4WP6XSWnlIOueRtlOL5Q2C3v3B/u0IxLa3HAS87YSOat35wIDAQAB",
   "version": "1.0.1",
   "description": "Oculta artículos, vídeos y secciones completas de MARCA.com por autor, palabra clave y/o tipo de contenido.",
   "permissions": ["storage", "tabs"],
